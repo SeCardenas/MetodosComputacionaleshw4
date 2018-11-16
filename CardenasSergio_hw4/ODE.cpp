@@ -10,10 +10,20 @@ const double c = 0.2, m = 0.2;
 double * x_prime(double * x, double * v);
 double * v_prime(double * x, double * v);
 
-void scalar_mul(double s, double * v, int N) {
+double * scalar_mul(double s, double * v, int N) {
+	double * r = new double[N];
 	for(int i = 0; i<N; i++) {
-		v[i] = s*v[i];
+		r[i] = s*v[i];
 	}
+	return r;
+}
+
+double * add(double * v, double * w, int N) {
+	double * r = new double[N];
+	for(int i = 0; i<N; i++) {
+		r[i] = v[i]+w[i];
+	}
+	return r;
 }
 
 double abs(double * v, int N) {
@@ -53,4 +63,12 @@ double * RK4Step(double * x_old, double * v_old, double dt) {
 	double * k1_x = x_prime(x_old, v_old);
 	double * k1_v = x_prime(x_old, v_old);
 
+	//k2
+	double * x_1 = add(x_old, scalar_mul(0.5*dt, k1_x, 2), 2);
+	double * v_1 = add(v_old, scalar_mul(0.5*dt, k1_v, 2), 2);
+
+	double * k2_x = x_prime(x_1, v_1);
+	double * k2_v = v_prime(x_1, v_1);
+
+	//k3
 }
