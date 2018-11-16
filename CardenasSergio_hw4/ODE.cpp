@@ -9,6 +9,7 @@ const double c = 0.2, m = 0.2;
 
 double * x_prime(double * x, double * v);
 double * v_prime(double * x, double * v);
+double * avg_k(double * k1, double * k2, double * k3, double * k4, double dt);
 
 double * scalar_mul(double s, double * v, int N) {
 	double * r = new double[N];
@@ -34,6 +35,18 @@ double abs(double * v, int N) {
 	return sqrt(sum);
 }
 
+double * append(double * v, double * w, int M, int N) {
+	double * r = new double[M+N];
+	int i;
+	for(i = 0; i<M; i++) {
+		r[i] = v[i];
+	}
+	for(i = 0; i<N; i++) {
+		r[i+M] = w[i];
+	}
+	return r;
+}
+
 int main() {
 	double dt = 0.01;
 }
@@ -56,6 +69,14 @@ double * v_prime(double * x, double * v) {
 	deriv[0] = -c/m * abs(v, 2)*v[0]; // dv/dt en x
 	deriv[1] = -g-c/m * abs(v, 2)*v[1]; // dv/dt en y
 	return deriv;
+}
+
+double * avg_k(double * k1, double * k2, double * k3, double * k4, double dt) {
+	double * avg_k = new double[2];
+	for(int i = 0; i<2; i++) {
+		avg_k[i] = 1.0/6.0 * (k1[i] + 2*k2[i] + 2*k3[i] + k4[i]) * dt;
+	}
+	return avg_k;
 }
 
 double * RK4Step(double * x_old, double * v_old, double dt) {
@@ -85,5 +106,10 @@ double * RK4Step(double * x_old, double * v_old, double dt) {
 	double * k4_v = v_prime(x_3, v_3);
 
 	//1/6 * (k1 + 2*k2 + 2*k3 + k4)
-	
+	double * avg_k_x = avg_k(k1_x, k2_x, k3_x, k4_x, dt);
+	double * avg_k_v = avg_k(k1_v, k2_v, k3_v, k4_v, dt);
+
+	double * x_new = add(x_old, avg_k_x, 2);
+	double * v_new = add(v_old, avg_k_v, 2);
+	return append(x_new, v_new, 2, 2);
 }
