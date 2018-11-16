@@ -71,4 +71,19 @@ double * RK4Step(double * x_old, double * v_old, double dt) {
 	double * k2_v = v_prime(x_1, v_1);
 
 	//k3
+	double * x_2 = add(x_old, scalar_mul(0.5*dt, k2_x, 2), 2);
+	double * v_2 = add(v_old, scalar_mul(0.5*dt, k2_v, 2), 2);
+
+	double * k3_x = x_prime(x_2, v_2);
+	double * k3_v = v_prime(x_2, v_2);
+
+	//k4
+	double * x_3 = add(x_old, scalar_mul(dt, k3_x, 2), 2);
+	double * v_3 = add(v_old, scalar_mul(dt, k3_v, 2), 2);
+
+	double * k4_x = x_prime(x_3, v_3);
+	double * k4_v = v_prime(x_3, v_3);
+
+	//1/6 * (k1 + 2*k2 + 2*k3 + k4)
+	
 }
