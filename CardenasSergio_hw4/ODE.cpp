@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
@@ -54,16 +55,21 @@ int main() {
 	double x_0[] = {0, 0};
 	double v_0[] = {v0*cos(angle*PI/180), v0*sin(angle*PI/180)};
 	double * next;
+
+	ofstream output;
+  	output.open ("proyectil.txt");
+
 	for(int i = 1; i<N; i++) {
 		next = RK4_step(x_0, v_0, dt);
 		x_0[0] = next[0];
 		x_0[1] = next[1];
 		v_0[0] = next[2];
 		v_0[1] = next[3];
-		//imprimir recorrido
-		cout << x_0[0] << " " << x_0[1] << endl;
+		//guardar recorrido en un archivo
+		output << x_0[0] << " " << x_0[1] << " " << v_0[0] << " " << v_0[1] << endl;
 
 	}
+	output.close();
 }
 
 /**
