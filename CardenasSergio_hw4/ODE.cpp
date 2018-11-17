@@ -6,6 +6,7 @@ using namespace std;
 
 const int g = 10;
 const double c = 0.2, m = 0.2;
+# define PI           3.14159265358979323846
 
 double * x_prime(double * x, double * v);
 double * v_prime(double * x, double * v);
@@ -48,7 +49,16 @@ double * append(double * v, double * w, int M, int N) {
 }
 
 int main() {
-	double dt = 0.01;
+	double dt = 0.001, v0 = 300, angle = 45;
+	int N = 2000;
+	double x_0[] = {0, 0};
+	double v_0[] = {v0*cos(angle*PI/180), v0*sin(angle*PI/180)};
+	double * x_now, * v_now, * x_aux, * v_aux, * x_x = new double[N+1], * x_y = new double[N+1];
+	x_x[0] = x_0[0];
+	x_y[0] = x_0[1];
+	for(int i = 0; i<N; i++) {
+
+	}
 }
 
 /**
@@ -105,7 +115,7 @@ double * RK4Step(double * x_old, double * v_old, double dt) {
 	double * k4_x = x_prime(x_3, v_3);
 	double * k4_v = v_prime(x_3, v_3);
 
-	//1/6 * (k1 + 2*k2 + 2*k3 + k4)
+	//1/6 * dt * (k1 + 2*k2 + 2*k3 + k4)
 	double * avg_k_x = avg_k(k1_x, k2_x, k3_x, k4_x, dt);
 	double * avg_k_v = avg_k(k1_v, k2_v, k3_v, k4_v, dt);
 
