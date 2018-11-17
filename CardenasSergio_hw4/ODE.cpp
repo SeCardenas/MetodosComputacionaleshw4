@@ -4,13 +4,13 @@
 
 using namespace std;
 
-const int g = 10;
-const double c = 0.2, m = 0.2;
+const double c = 0.2, m = 0.2, g = 10;
 # define PI           3.14159265358979323846
 
 double * x_prime(double * x, double * v);
 double * v_prime(double * x, double * v);
 double * avg_k(double * k1, double * k2, double * k3, double * k4, double dt);
+double * RK4_step(double * x_old, double * v_old, double dt);
 
 double * scalar_mul(double s, double * v, int N) {
 	double * r = new double[N];
@@ -49,14 +49,19 @@ double * append(double * v, double * w, int M, int N) {
 }
 
 int main() {
-	double dt = 0.001, v0 = 300, angle = 45;
-	int N = 2000;
+	double dt = 0.001, v0 = 300, angle = 45, t = 2;
+	int N = (int)(t/dt);
 	double x_0[] = {0, 0};
 	double v_0[] = {v0*cos(angle*PI/180), v0*sin(angle*PI/180)};
-	double * x_now, * v_now, * x_aux, * v_aux, * x_x = new double[N+1], * x_y = new double[N+1];
-	x_x[0] = x_0[0];
-	x_y[0] = x_0[1];
-	for(int i = 0; i<N; i++) {
+	double * next;
+	for(int i = 1; i<N; i++) {
+		next = RK4_step(x_0, v_0, dt);
+		x_0[0] = next[0];
+		x_0[1] = next[1];
+		v_0[0] = next[2];
+		v_0[1] = next[3];
+		//imprimir recorrido
+		cout << x_0[0] << " " << x_0[1] << endl;
 
 	}
 }
@@ -89,7 +94,7 @@ double * avg_k(double * k1, double * k2, double * k3, double * k4, double dt) {
 	return avg_k;
 }
 
-double * RK4Step(double * x_old, double * v_old, double dt) {
+double * RK4_step(double * x_old, double * v_old, double dt) {
 	//k1
 	double * k1_x = x_prime(x_old, v_old);
 	double * k1_v = x_prime(x_old, v_old);
@@ -119,6 +124,7 @@ double * RK4Step(double * x_old, double * v_old, double dt) {
 	double * avg_k_x = avg_k(k1_x, k2_x, k3_x, k4_x, dt);
 	double * avg_k_v = avg_k(k1_v, k2_v, k3_v, k4_v, dt);
 
+	//se retorna x_new y v_new en un solo arreglo
 	double * x_new = add(x_old, avg_k_x, 2);
 	double * v_new = add(v_old, avg_k_v, 2);
 	return append(x_new, v_new, 2, 2);
