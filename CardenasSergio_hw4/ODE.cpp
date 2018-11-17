@@ -12,6 +12,7 @@ double * x_prime(double * x, double * v);
 double * v_prime(double * x, double * v);
 double * avg_k(double * k1, double * k2, double * k3, double * k4, double dt);
 double * RK4_step(double * x_old, double * v_old, double dt);
+double recorrido(double dt, double v0, double angle, ofstream * output);
 
 double * scalar_mul(double s, double * v, int N) {
 	double * r = new double[N];
@@ -50,25 +51,30 @@ double * append(double * v, double * w, int M, int N) {
 }
 
 int main() {
-	double dt = 0.001, v0 = 300, angle = 45, t = 2;
-	int N = (int)(t/dt);
-	double x_0[] = {0, 0};
-	double v_0[] = {v0*cos(angle*PI/180), v0*sin(angle*PI/180)};
-	double * next;
-
+	//parte 1
+	double dt = 0.001, v0 = 300, angle = 45;
 	ofstream output;
   	output.open ("proyectil.txt");
 
-	for(int i = 1; i<N; i++) {
-		next = RK4_step(x_0, v_0, dt);
-		x_0[0] = next[0];
-		x_0[1] = next[1];
-		v_0[0] = next[2];
-		v_0[1] = next[3];
-		//guardar recorrido en un archivo
-		output << x_0[0] << " " << x_0[1] << " " << v_0[0] << " " << v_0[1] << endl;
+  	recorrido(dt, v0, angle, &output);
+	output.close();
 
+	//parte 2
+	double angles[] = {10, 20, 30, 40, 50, 60, 70};
+	int num_angles = sizeof(angles)/sizeof(*angles);
+	double distance, max_distance = 0, angle_max_d = 0;
+
+	output.open("proyectil2.txt");
+	cout << "ángulos:" << endl;
+	for(int i = 0; i<num_angles; i++) {
+		cout << angles[i] << "°" << endl;
+		distance = recorrido(dt, v0, angles[i], &output);
+		if(distance > max_distance) {
+			max_distance = distance;
+			angle_max_d = angles[i];
+		}
 	}
+	cout << "El ángulo con el que se consigue la mayor distancia recorrida es " << angle_max_d << "° con una distancia total de " << max_distance << endl;
 	output.close();
 }
 
@@ -134,4 +140,26 @@ double * RK4_step(double * x_old, double * v_old, double dt) {
 	double * x_new = add(x_old, avg_k_x, 2);
 	double * v_new = add(v_old, avg_k_v, 2);
 	return append(x_new, v_new, 2, 2);
+}
+
+double recorrido(double dt, double v0, double angle, ofstream * output) {
+	double x_0[] = {0, 0};
+	double v_0[] = {v0*cos(angle*PI/180), v0*sin(angle*PI/180)};
+	double * next, t = 0;
+
+  	(*output) << t << " " << x_0[0] << " " << x_0[1] << " " << v_0[0] << " " << v_0[1] << endl;
+
+	while(x_0[1] >= 0) {
+		next = RK4_step(x_0, v_0, dt);
+		x_0[0] = next[0];
+		x_0[1] = next[1];
+		v_0[0] = next[2];
+		v_0[1] = next[3];
+		t += dt;
+		//guardar recorrido en un archivo
+		(*output) << t << " " << x_0[0] << " " << x_0[1] << " " << v_0[0] << " " << v_0[1] << endl;
+
+	}
+	cout << "distancia recorrida con un ángulo inicial de " << angle << "°: " << x_0[0] << "m" << endl;
+	return x_0[0];
 }
