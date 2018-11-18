@@ -12,17 +12,20 @@ const double L = 0.5; // en metros
 const double T0_c = 10, T0_b = 50; //°C
 
 const int N_x = 51;
-const double alpha = 0.5;
+const double eta = 0.5;
 
 double get_r(int i, int j, int N, double dx);
 double initial_cond(int i, int j, int N, double dx);
+void step_fixed_borders(double **T_old, double **T_new, double eta, int N);
+void step_periodic_borders(double **T_old, double **T_new, double eta, int N);
+void step_open_borders(double **T_old, double **T_new, double eta, int N);
 
 using namespace std;
 
 int main() {
 	int i, j, k;
 	double dx = L/(N_x-1);
-	double dt = alpha*dx/nu*dx;
+	double dt = eta*dx/nu*dx;
 	//Creación de las matrices como un arreglo de apuntadores
 	double **T_0 = new double *[N_x], **T_1 = new double *[N_x], **T_aux;
 	for(i = 0; i<N_x; i++) {
@@ -33,9 +36,8 @@ int main() {
 	for(i = 0; i<N_x; i++) {
 		for(j = 0; j<N_x; j++) {
 			T_0[i][j] = initial_cond(i, j, N_x, dx);
-			cout << T_0[i][j] << " ";
+			T_1[i][j] = T_0[i][j];
 		}
-		cout << endl;
 	}
 }
 
@@ -48,9 +50,34 @@ double get_r(int i, int j, int N, double dx) {
 
 double initial_cond(int i, int j, int N, double dx) {
 	double r = get_r(i, j, N, dx);
-
 	if(r>d) {
 		return 10; //°C
 	}
 	return 100; //°C
+}
+
+void step_fixed_borders(double **T_old, double **T_new, double eta, int N) {
+	for(int i = 0; i<N; i++) {
+		for(int j = 0; j<N; j++) {
+			if(i!=0 && i!=N-1 && j!=0 && j!=N-1)
+				T_new[i][j] = T_old[i][j] + eta*(T_old[i+1][j] + T_old[i-1][j] + T_old[i][j+1] + T_old[i][j-1] - 4*T_old[i][j]);
+		}
+	}
+}
+
+void step_periodic_borders(double **T_old, double **T_new, double eta, int N) {
+	for(int i = 0; i<N; i++) {
+		for(int j = 1; j<N-1; j++) {
+			T_new[i][j] = T_old[i][j] + eta*(T_old[(i+1)%N][j] + T_old[(i+N-1)%N][j] + T_old[i][(j+1)%N] + T_old[i][(j+N-1)%N] - 4*T_old[i][j]);
+		}
+	}
+}
+
+void step_open_borders(double **T_old, double **T_new, double eta, int N) {
+	for(int i = 0; i<N; i++) {
+		for(int j = 1; j<N-1; j++) {
+			if(i!=0 && i!=N-1 && j!=0 && j!=N-1)
+				T_new[i][j] = T_old[i][j] + eta*(T_old[i+1][j] + T_old[i-1][j] + T_old[i][j+1] + T_old[i][j-1] - 4*T_old[i][j]);
+		}
+	}
 }
