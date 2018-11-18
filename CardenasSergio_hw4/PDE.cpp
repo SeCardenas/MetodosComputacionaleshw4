@@ -16,9 +16,9 @@ const double eta = 0.2;
 
 double get_r(int i, int j, int N, double dx);
 double initial_cond(int i, int j, int N, double dx);
-void step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N);
-void step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N);
-void step_open_borders(double **T_old, double **T_new, double eta, double dx, int N);
+double step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N);
+double step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N);
+double step_open_borders(double **T_old, double **T_new, double eta, double dx, int N);
 
 using namespace std;
 
@@ -41,9 +41,10 @@ int main() {
 	}
 
 	int N_t = 500; //provisional
+	cout << "promedios:" << endl;
 	for(k = 1; k<N_t; k++) {
 		//avance
-		step_fixed_borders(T_0, T_1, eta, dx, N_x);
+		cout << step_fixed_borders(T_0, T_1, eta, dx, N_x) << endl;
 		//cambio de apuntadores
 		T_aux = T_1;
 		T_1 = T_0;
@@ -72,29 +73,57 @@ double initial_cond(int i, int j, int N, double dx) {
 	return 100; //°C
 }
 
-void step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N) {
+double step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N) {
+	double r, sum = 0;
+	int numPoints = 0;
 	for(int i = 0; i<N; i++) {
 		for(int j = 0; j<N; j++) {
-			if(i!=0 && i!=N-1 && j!=0 && j!=N-1 && get_r(i, j, N, dx)>d)
+			r = get_r(i, j, N, dx);
+			if(i!=0 && i!=N-1 && j!=0 && j!=N-1 && r>d) {
 				T_new[i][j] = T_old[i][j] + eta*(T_old[i+1][j] + T_old[i-1][j] + T_old[i][j+1] + T_old[i][j-1] - 4*T_old[i][j]);
+			}
+			//cálculo del promedio
+			if(r>d) {
+				sum += T_new[i][j];
+				numPoints++;
+			}
 		}
 	}
+	return sum/numPoints;
 }
 
-void step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N) {
+double step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N) {
+	double r, sum = 0;
+	int numPoints = 0;
 	for(int i = 0; i<N; i++) {
 		for(int j = 0; j<N; j++) {
-			if(get_r(i, j, N, dx)>d)
+			r = get_r(i, j, N, dx);
+			if(get_r(i, j, N, dx)>d) {
 				T_new[i][j] = T_old[i][j] + eta*(T_old[(i+1)%N][j] + T_old[(i+N-1)%N][j] + T_old[i][(j+1)%N] + T_old[i][(j+N-1)%N] - 4*T_old[i][j]);
+				//para el cálculo del promedio
+				sum += T_new[i][j];
+				numPoints++;
+			}
 		}
 	}
+	return sum/numPoints;
 }
 
-void step_open_borders(double **T_old, double **T_new, double eta, double dx, int N) {
+double step_open_borders(double **T_old, double **T_new, double eta, double dx, int N) {
+	double r, sum = 0;
+	int numPoints = 0;
 	for(int i = 0; i<N; i++) {
 		for(int j = 1; j<N-1; j++) {
-			if(i!=0 && i!=N-1 && j!=0 && j!=N-1 && get_r(i, j, N, dx)>d)
+			r = get_r(i, j, N, dx);
+			if(i!=0 && i!=N-1 && j!=0 && j!=N-1 && r>d) {
 				T_new[i][j] = T_old[i][j] + eta*(T_old[i+1][j] + T_old[i-1][j] + T_old[i][j+1] + T_old[i][j-1] - 4*T_old[i][j]);
+			}
+			//cálculo del promedio
+			if(r>d) {
+				sum += T_new[i][j];
+				numPoints++;
+			}
 		}
 	}
+	return sum/numPoints;
 }
