@@ -55,7 +55,7 @@ plt.close()
 #condiciones iniciales
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, temp_fixed[0,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+surf = ax.plot_surface(x, y, temp_fixed[0,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 plt.close()
@@ -63,14 +63,14 @@ plt.close()
 a = temp_fixed.shape[0]
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, temp_fixed[1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+surf = ax.plot_surface(x, y, temp_fixed[1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 plt.close()
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, temp_fixed[2,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+surf = ax.plot_surface(x, y, temp_fixed[2,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 plt.close()
@@ -78,7 +78,7 @@ plt.close()
 #estado final
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, temp_fixed[-1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+surf = ax.plot_surface(x, y, temp_fixed[-1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 plt.close()
@@ -104,7 +104,7 @@ plt.close()
 #condiciones iniciales
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, temp_periodic[0,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+surf = ax.plot_surface(x, y, temp_periodic[0,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 plt.close()
@@ -112,14 +112,16 @@ plt.close()
 a = temp_periodic.shape[0]
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, temp_periodic[1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+surf = ax.plot_surface(x, y, temp_periodic[1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
+ax.set_zlim(10,100)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 plt.close()
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, temp_periodic[2,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+surf = ax.plot_surface(x, y, temp_periodic[2,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
+ax.set_zlim(10,100)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 plt.close()
@@ -127,7 +129,59 @@ plt.close()
 #estado final
 fig = plt.figure()
 ax = fig.gca(projection='3d')
-surf = ax.plot_surface(x, y, temp_periodic[-1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+surf = ax.plot_surface(x, y, temp_periodic[-1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
+ax.set_zlim(10,100)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+
+print "kdjgfn"
+#caso periodic boundaries
+temp_open = np.loadtxt('temp_open_boundaries.txt')
+mean_open = np.loadtxt('mean_open_boundaries.txt')
+#Se convierte el arreglo 2D en uno 3D
+a, b = temp_open.shape
+print temp_open.shape
+temp_open = temp_open.reshape((a/(b-1), b-1, b))
+print temp_open.shape
+x_open = temp_open[0,:,0]
+y_open = temp_open[0,:,0]
+x, y = np.meshgrid(x_open, x_open)
+#Graficas
+#Temperatura promedio
+plt.plot(mean_open[:,0], mean_open[:,1])
+plt.show()
+plt.close()
+#condiciones iniciales
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_open[0,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+#estados intermedios
+a = temp_open.shape[0]
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_open[1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
+ax.set_zlim(10,100)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_open[2,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
+ax.set_zlim(10,100)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+
+#estado final
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_open[-1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0, vmin=10, vmax=100)
+ax.set_zlim(10,100)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
 plt.close()
