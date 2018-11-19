@@ -22,6 +22,8 @@ double step_fixed_borders(double **T_old, double **T_new, double eta, double dx,
 double step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
 double step_open_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
 double fixed_borders(double **T_0, double **T_1, double dx, double dt, int N_x);
+double periodic_borders(double **T_0, double **T_1, double dx, double dt, int N_x);
+double open_borders(double **T_0, double **T_1, double dx, double dt, int N_x);
 
 int main() {
 	int i, j, k;
@@ -34,8 +36,10 @@ int main() {
 		T_1[i] = new double[N_x];
 	}
 	
-	//Primer caso
+	//Todos los casos
 	fixed_borders(T_0, T_1, dx, dt, N_x);
+	periodic_borders(T_0, T_1, dx, dt, N_x);
+	open_borders(T_0, T_1, dx, dt, N_x);
 }
 
 double get_r(int i, int j, int N, double dx) {
@@ -153,6 +157,7 @@ double fixed_borders(double **T_0, double **T_1, double dx, double dt, int N_x) 
 
 	//Condiciones iniciales
 	for(i = 0; i<N_x; i++) {
+		temp_o << i*dx << " ";
 		for(j = 0; j<N_x; j++) {
 			T_0[i][j] = initial_cond(i, j, N_x, dx);
 			T_1[i][j] = T_0[i][j];
@@ -185,7 +190,123 @@ double fixed_borders(double **T_0, double **T_1, double dx, double dt, int N_x) 
 		if(abs(mean_old - mean_new) <= 0.00000002) break; //Para que no se quede infinitamente en el loop, la diferencia no es exactamente 0
 		mean_old = mean_new;
 	}
+	//Temperaturas finales
 	for(i = 0; i<N_x; i++) {
+		temp_o << i*dx << " ";
+		for(j = 0; j<N_x; j++) {
+			temp_o << T_aux[i][j];
+			if(j != N_x-1) {
+				temp_o << " ";
+			}
+		}
+		temp_o << endl;
+	}
+	cout << t << endl;
+}
+
+double periodic_borders(double **T_0, double **T_1, double dx, double dt, int N_x) {
+	int i, j;
+
+	//archivos de salida
+	ofstream temp_o, mean_o;
+	temp_o.open("temp_periodic_borders.txt");
+	mean_o.open("mean_periodic_borders.txt");
+
+	//Condiciones iniciales
+	for(i = 0; i<N_x; i++) {
+		temp_o << i*dx << " ";
+		for(j = 0; j<N_x; j++) {
+			T_0[i][j] = initial_cond(i, j, N_x, dx);
+			T_1[i][j] = T_0[i][j];
+			temp_o << T_0[i][j];
+			if(j != N_x-1) {
+				temp_o << " ";
+			}
+		}
+		temp_o << endl;
+	}
+	temp_o <<  endl;
+
+	double mean_old = 10, mean_new, **T_aux;
+	double t = 0;
+	int k = 0;
+
+	mean_o << t << " " << mean_old << endl;
+	while(true) {
+		k++;
+		t+=dt;
+		//avance
+		mean_new = step_periodic_borders(T_0, T_1, eta, dx, N_x, &temp_o, (k%1000) == 0);
+		mean_o << t << " " << mean_new << endl;
+		cout << ""; //Para que no se trabe
+		//cambio de apuntadores
+		T_aux = T_1;
+		T_1 = T_0;
+		T_0 = T_aux;
+		//condición de salida (equilibrio)
+		if(abs(mean_old - mean_new) <= 0.00000002) break; //Para que no se quede infinitamente en el loop, la diferencia no es exactamente 0
+		mean_old = mean_new;
+	}
+	//Temperaturas finales
+	for(i = 0; i<N_x; i++) {
+		temp_o << i*dx << " ";
+		for(j = 0; j<N_x; j++) {
+			temp_o << T_aux[i][j];
+			if(j != N_x-1) {
+				temp_o << " ";
+			}
+		}
+		temp_o << endl;
+	}
+	cout << t << endl;
+}
+
+double open_borders(double **T_0, double **T_1, double dx, double dt, int N_x) {
+	int i, j;
+
+	//archivos de salida
+	ofstream temp_o, mean_o;
+	temp_o.open("temp_open_borders.txt");
+	mean_o.open("mean_open_borders.txt");
+
+	//Condiciones iniciales
+	for(i = 0; i<N_x; i++) {
+		temp_o << i*dx << " ";
+		for(j = 0; j<N_x; j++) {
+			T_0[i][j] = initial_cond(i, j, N_x, dx);
+			T_1[i][j] = T_0[i][j];
+			temp_o << T_0[i][j];
+			if(j != N_x-1) {
+				temp_o << " ";
+			}
+		}
+		temp_o << endl;
+	}
+	temp_o <<  endl;
+
+	double mean_old = 10, mean_new, **T_aux;
+	double t = 0;
+	int k = 0;
+
+	mean_o << t << " " << mean_old << endl;
+	while(true) {
+		k++;
+		t+=dt;
+		//avance
+		mean_new = step_open_borders(T_0, T_1, eta, dx, N_x, &temp_o, (k%1000) == 0);
+		mean_o << t << " " << mean_new << endl;
+		cout << ""; //Para que no se trabe
+		//cambio de apuntadores
+		T_aux = T_1;
+		T_1 = T_0;
+		T_0 = T_aux;
+		//condición de salida (equilibrio)
+		if(abs(mean_old - mean_new) <= 0.00000002) break; //Para que no se quede infinitamente en el loop, la diferencia no es exactamente 0
+		mean_old = mean_new;
+	}
+	//Temperaturas finales
+	for(i = 0; i<N_x; i++) {
+		temp_o << i*dx << " ";
 		for(j = 0; j<N_x; j++) {
 			temp_o << T_aux[i][j];
 			if(j != N_x-1) {
