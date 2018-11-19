@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm
+from mpl_toolkits.mplot3d import Axes3D
 
 ##### Graficas punto 2 #####
 #trayectoria 45 grados
@@ -11,7 +13,7 @@ plt.ylim(0)
 plt.title('Trayectoria proyectil a 45$^\circ$')
 plt.xlabel('$x$')
 plt.ylabel('$y$')
-plt.show()
+plt.savefig('trayectoria_45.png')
 plt.close()
 
 #otras trayectorias
@@ -31,5 +33,28 @@ plt.title('Trayectoria proyectil a diferentes angulos')
 plt.xlabel('$x$')
 plt.ylabel('$y$')
 plt.legend()
+plt.savefig('trayectoria_varios_angulos.png')
+plt.close()
+
+##### Graficas punto 3 #####
+#caso fixed boundaries
+temp_fixed = np.loadtxt('temp_fixed_boundaries.txt')
+mean_fixed = np.loadtxt('mean_fixed_boundaries.txt')
+#Se convierte el arreglo 2D en uno 3D
+a, b = temp_fixed.shape
+temp_fixed = temp_fixed.reshape((a/(b-1), b-1, b))
+print temp_fixed.shape
+x_fixed = temp_fixed[0,:,0]
+y_fixed = temp_fixed[0,:,0]
+x, y = np.meshgrid(x_fixed, x_fixed)
+#Graficas
+#Temperatura promedio
+plt.plot(mean_fixed[:,0], mean_fixed[:,1])
 plt.show()
 plt.close()
+#condiciones iniciales
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_fixed[0,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
