@@ -18,12 +18,12 @@ using namespace std;
 
 double get_r(int i, int j, int N, double dx);
 double initial_cond(int i, int j, int N, double dx);
-double step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
-double step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
-double step_open_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
-double fixed_borders(double **T_0, double **T_1, double dx, double dt, int N_x);
-double periodic_borders(double **T_0, double **T_1, double dx, double dt, int N_x);
-double open_borders(double **T_0, double **T_1, double dx, double dt, int N_x);
+double step_fixed_boundaries(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
+double step_periodic_boundaries(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
+double step_open_boundaries(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
+double fixed_boundaries(double **T_0, double **T_1, double dx, double dt, int N_x);
+double periodic_boundaries(double **T_0, double **T_1, double dx, double dt, int N_x);
+double open_boundaries(double **T_0, double **T_1, double dx, double dt, int N_x);
 
 int main() {
 	int i, j, k;
@@ -37,9 +37,9 @@ int main() {
 	}
 	
 	//Todos los casos
-	fixed_borders(T_0, T_1, dx, dt, N_x);
-	periodic_borders(T_0, T_1, dx, dt, N_x);
-	open_borders(T_0, T_1, dx, dt, N_x);
+	fixed_boundaries(T_0, T_1, dx, dt, N_x);
+	periodic_boundaries(T_0, T_1, dx, dt, N_x);
+	open_boundaries(T_0, T_1, dx, dt, N_x);
 }
 
 double get_r(int i, int j, int N, double dx) {
@@ -57,7 +57,7 @@ double initial_cond(int i, int j, int N, double dx) {
 	return 100; //°C
 }
 
-double step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w) {
+double step_fixed_boundaries(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w) {
 	double r, sum = 0;
 	int numPoints = 0;
 	for(int i = 0; i<N; i++) {
@@ -90,7 +90,7 @@ double step_fixed_borders(double **T_old, double **T_new, double eta, double dx,
 	return sum/numPoints;
 }
 
-double step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w) {
+double step_periodic_boundaries(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w) {
 	double r, sum = 0;
 	int numPoints = 0;
 	for(int i = 0; i<N; i++) {
@@ -107,7 +107,7 @@ double step_periodic_borders(double **T_old, double **T_new, double eta, double 
 	return sum/numPoints;
 }
 
-double step_open_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w) {
+double step_open_boundaries(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w) {
 	double r, sum, temp = 0;
 	int numPoints = 0;
 	double deriv_x, deriv_y;
@@ -147,13 +147,13 @@ double step_open_borders(double **T_old, double **T_new, double eta, double dx, 
 	return sum/numPoints;
 }
 
-double fixed_borders(double **T_0, double **T_1, double dx, double dt, int N_x) {
+double fixed_boundaries(double **T_0, double **T_1, double dx, double dt, int N_x) {
 	int i, j;
 
 	//archivos de salida
 	ofstream temp_o, mean_o;
-	temp_o.open("temp_fixed_borders.txt");
-	mean_o.open("mean_fixed_borders.txt");
+	temp_o.open("temp_fixed_boundaries.txt");
+	mean_o.open("mean_fixed_boundaries.txt");
 
 	//Condiciones iniciales
 	for(i = 0; i<N_x; i++) {
@@ -179,7 +179,7 @@ double fixed_borders(double **T_0, double **T_1, double dx, double dt, int N_x) 
 		k++;
 		t+=dt;
 		//avance
-		mean_new = step_fixed_borders(T_0, T_1, eta, dx, N_x, &temp_o, (k%250) == 0);
+		mean_new = step_fixed_boundaries(T_0, T_1, eta, dx, N_x, &temp_o, (k%250) == 0);
 		mean_o << t << " " << mean_new << endl;
 		cout << ""; //Para que no se trabe
 		//cambio de apuntadores
@@ -204,13 +204,13 @@ double fixed_borders(double **T_0, double **T_1, double dx, double dt, int N_x) 
 	cout << t << endl;
 }
 
-double periodic_borders(double **T_0, double **T_1, double dx, double dt, int N_x) {
+double periodic_boundaries(double **T_0, double **T_1, double dx, double dt, int N_x) {
 	int i, j;
 
 	//archivos de salida
 	ofstream temp_o, mean_o;
-	temp_o.open("temp_periodic_borders.txt");
-	mean_o.open("mean_periodic_borders.txt");
+	temp_o.open("temp_periodic_boundaries.txt");
+	mean_o.open("mean_periodic_boundaries.txt");
 
 	//Condiciones iniciales
 	for(i = 0; i<N_x; i++) {
@@ -236,7 +236,7 @@ double periodic_borders(double **T_0, double **T_1, double dx, double dt, int N_
 		k++;
 		t+=dt;
 		//avance
-		mean_new = step_periodic_borders(T_0, T_1, eta, dx, N_x, &temp_o, (k%1000) == 0);
+		mean_new = step_periodic_boundaries(T_0, T_1, eta, dx, N_x, &temp_o, (k%1000) == 0);
 		mean_o << t << " " << mean_new << endl;
 		cout << ""; //Para que no se trabe
 		//cambio de apuntadores
@@ -261,13 +261,13 @@ double periodic_borders(double **T_0, double **T_1, double dx, double dt, int N_
 	cout << t << endl;
 }
 
-double open_borders(double **T_0, double **T_1, double dx, double dt, int N_x) {
+double open_boundaries(double **T_0, double **T_1, double dx, double dt, int N_x) {
 	int i, j;
 
 	//archivos de salida
 	ofstream temp_o, mean_o;
-	temp_o.open("temp_open_borders.txt");
-	mean_o.open("mean_open_borders.txt");
+	temp_o.open("temp_open_boundaries.txt");
+	mean_o.open("mean_open_boundaries.txt");
 
 	//Condiciones iniciales
 	for(i = 0; i<N_x; i++) {
@@ -293,7 +293,7 @@ double open_borders(double **T_0, double **T_1, double dx, double dt, int N_x) {
 		k++;
 		t+=dt;
 		//avance
-		mean_new = step_open_borders(T_0, T_1, eta, dx, N_x, &temp_o, (k%1000) == 0);
+		mean_new = step_open_boundaries(T_0, T_1, eta, dx, N_x, &temp_o, (k%1000) == 0);
 		mean_o << t << " " << mean_new << endl;
 		cout << ""; //Para que no se trabe
 		//cambio de apuntadores
