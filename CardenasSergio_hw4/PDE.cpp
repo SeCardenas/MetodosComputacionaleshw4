@@ -94,16 +94,30 @@ double step_periodic_boundaries(double **T_old, double **T_new, double eta, doub
 	double r, sum = 0;
 	int numPoints = 0;
 	for(int i = 0; i<N; i++) {
+		if(w) {
+			*o << i*dx << " ";
+		}
 		for(int j = 0; j<N; j++) {
 			r = get_r(i, j, N, dx);
 			if(r>d) {
 				T_new[i][j] = T_old[i][j] + eta*(T_old[(i+1)%N][j] + T_old[(i+N-1)%N][j] + T_old[i][(j+1)%N] + T_old[i][(j+N-1)%N] - 4*T_old[i][j]);
+
 				//para el cálculo del promedio
 				sum += T_new[i][j];
 				numPoints++;
 			}
+
+			//guardar en archivo
+			if(w) {
+				*o << T_new[i][j];
+				if(j != N-1) {
+					*o << " ";
+				}
+			}
 		}
+		if(w) *o << endl;
 	}
+	if(w) *o << endl;
 	return sum/numPoints;
 }
 
@@ -112,6 +126,9 @@ double step_open_boundaries(double **T_old, double **T_new, double eta, double d
 	int numPoints = 0;
 	double deriv_x, deriv_y;
 	for(int i = 0; i<N; i++) {
+		if(w) {
+			*o << i*dx << " ";
+		}
 		for(int j = 0; j<N; j++) {
 			r = get_r(i, j, N, dx);
 
@@ -141,9 +158,17 @@ double step_open_boundaries(double **T_old, double **T_new, double eta, double d
 				sum += T_new[i][j];
 				numPoints++;
 			}
+			//guardar en archivo
+			if(w) {
+				*o << T_new[i][j];
+				if(j != N-1) {
+					*o << " ";
+				}
+			}
 		}
+		if(w) *o << endl;
 	}
-	
+	if(w) *o << endl;
 	return sum/numPoints;
 }
 
@@ -179,7 +204,7 @@ double fixed_boundaries(double **T_0, double **T_1, double dx, double dt, int N_
 		k++;
 		t+=dt;
 		//avance
-		mean_new = step_fixed_boundaries(T_0, T_1, eta, dx, N_x, &temp_o, (k%250) == 0);
+		mean_new = step_fixed_boundaries(T_0, T_1, eta, dx, N_x, &temp_o, (k%125) == 0);
 		mean_o << t << " " << mean_new << endl;
 		cout << ""; //Para que no se trabe
 		//cambio de apuntadores
