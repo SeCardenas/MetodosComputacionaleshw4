@@ -58,3 +58,76 @@ ax = fig.gca(projection='3d')
 surf = ax.plot_surface(x, y, temp_fixed[0,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
+plt.close()
+#estados intermedios
+a = temp_fixed.shape[0]
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_fixed[1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_fixed[2,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+
+#estado final
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_fixed[-1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+
+
+print "sdkfsd"
+#caso periodic boundaries
+temp_periodic = np.loadtxt('temp_periodic_boundaries.txt')
+mean_periodic = np.loadtxt('mean_periodic_boundaries.txt')
+#Se convierte el arreglo 2D en uno 3D
+a, b = temp_periodic.shape
+print temp_periodic.shape
+temp_periodic = temp_periodic.reshape((a/(b-1), b-1, b))
+print temp_periodic.shape
+x_periodic = temp_periodic[0,:,0]
+y_periodic = temp_periodic[0,:,0]
+x, y = np.meshgrid(x_periodic, x_periodic)
+#Graficas
+#Temperatura promedio
+plt.plot(mean_periodic[:,0], mean_periodic[:,1])
+plt.show()
+plt.close()
+#condiciones iniciales
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_periodic[0,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+#estados intermedios
+a = temp_periodic.shape[0]
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_periodic[1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_periodic[2,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
+
+#estado final
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(x, y, temp_periodic[-1,:,1:], rstride=1, cstride=1, cmap=cm.autumn_r, linewidth=0)
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+plt.close()
