@@ -14,13 +14,14 @@ const double T0_c = 10, T0_b = 50; //°C
 const int N_x = 51;
 const double eta = 0.2;
 
+using namespace std;
+
 double get_r(int i, int j, int N, double dx);
 double initial_cond(int i, int j, int N, double dx);
-double step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N);
-double step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N);
-double step_open_borders(double **T_old, double **T_new, double eta, double dx, int N);
-
-using namespace std;
+double step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
+double step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
+double step_open_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w);
+double fixed_borders(double **T_0, double **T_1, double dx, double dt, int N_x);
 
 int main() {
 	int i, j, k;
@@ -32,35 +33,9 @@ int main() {
 		T_0[i] = new double[N_x];
 		T_1[i] = new double[N_x];
 	}
-	//Condiciones iniciales
-	for(i = 0; i<N_x; i++) {
-		for(j = 0; j<N_x; j++) {
-			T_0[i][j] = initial_cond(i, j, N_x, dx);
-			T_1[i][j] = T_0[i][j];
-		}
-	}
-	double mean_old = 10, mean_new;
-	int t = 0;
-	while(true) {
-		t++;
-		//avance
-		mean_new = step_open_borders(T_0, T_1, eta, dx, N_x);
-		cout << ""; //Para que no se trabe
-		//cambio de apuntadores
-		T_aux = T_1;
-		T_1 = T_0;
-		T_0 = T_aux;
-		//condición de salida (equilibrio)
-		if(abs(mean_old - mean_new) <= 0.00000002) break; //Para que no se quede infinitamente en el loop, la diferencia no es exactamente 0
-		mean_old = mean_new;
-	}
-	for(i = 0; i<N_x; i++) {
-		for(j = 0; j<N_x; j++) {
-			cout << T_aux[i][j] << " ";
-		}
-		cout << endl;
-	}
-	cout << t << endl;
+	
+	//Primer caso
+	fixed_borders(T_0, T_1, dx, dt, N_x);
 }
 
 double get_r(int i, int j, int N, double dx) {
@@ -78,26 +53,40 @@ double initial_cond(int i, int j, int N, double dx) {
 	return 100; //°C
 }
 
-double step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N) {
+double step_fixed_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w) {
 	double r, sum = 0;
 	int numPoints = 0;
 	for(int i = 0; i<N; i++) {
+		if(w) {
+			*o << i*dx << " ";
+		}
 		for(int j = 0; j<N; j++) {
 			r = get_r(i, j, N, dx);
 			if(i!=0 && i!=N-1 && j!=0 && j!=N-1 && r>d) {
 				T_new[i][j] = T_old[i][j] + eta*(T_old[i+1][j] + T_old[i-1][j] + T_old[i][j+1] + T_old[i][j-1] - 4*T_old[i][j]);
 			}
+
+			//guardar en archivo
+			if(w) {
+				*o << T_new[i][j];
+				if(j != N-1) {
+					*o << " ";
+				}
+			}
+
 			//cálculo del promedio
 			if(r>d) {
 				sum += T_new[i][j];
 				numPoints++;
 			}
 		}
+		if(w) *o << endl;
 	}
+	if(w) *o << endl;
 	return sum/numPoints;
 }
 
-double step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N) {
+double step_periodic_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w) {
 	double r, sum = 0;
 	int numPoints = 0;
 	for(int i = 0; i<N; i++) {
@@ -114,7 +103,7 @@ double step_periodic_borders(double **T_old, double **T_new, double eta, double 
 	return sum/numPoints;
 }
 
-double step_open_borders(double **T_old, double **T_new, double eta, double dx, int N) {
+double step_open_borders(double **T_old, double **T_new, double eta, double dx, int N, ofstream *o, bool w) {
 	double r, sum, temp = 0;
 	int numPoints = 0;
 	double deriv_x, deriv_y;
@@ -150,5 +139,60 @@ double step_open_borders(double **T_old, double **T_new, double eta, double dx, 
 			}
 		}
 	}
+	
 	return sum/numPoints;
+}
+
+double fixed_borders(double **T_0, double **T_1, double dx, double dt, int N_x) {
+	int i, j;
+
+	//archivos de salida
+	ofstream temp_o, mean_o;
+	temp_o.open("temp_fixed_borders.txt");
+	mean_o.open("mean_fixed_borders.txt");
+
+	//Condiciones iniciales
+	for(i = 0; i<N_x; i++) {
+		for(j = 0; j<N_x; j++) {
+			T_0[i][j] = initial_cond(i, j, N_x, dx);
+			T_1[i][j] = T_0[i][j];
+			temp_o << T_0[i][j];
+			if(j != N_x-1) {
+				temp_o << " ";
+			}
+		}
+		temp_o << endl;
+	}
+	temp_o <<  endl;
+
+	double mean_old = 10, mean_new, **T_aux;
+	double t = 0;
+	int k = 0;
+
+	mean_o << t << " " << mean_old << endl;
+	while(true) {
+		k++;
+		t+=dt;
+		//avance
+		mean_new = step_fixed_borders(T_0, T_1, eta, dx, N_x, &temp_o, (k%250) == 0);
+		mean_o << t << " " << mean_new << endl;
+		cout << ""; //Para que no se trabe
+		//cambio de apuntadores
+		T_aux = T_1;
+		T_1 = T_0;
+		T_0 = T_aux;
+		//condición de salida (equilibrio)
+		if(abs(mean_old - mean_new) <= 0.00000002) break; //Para que no se quede infinitamente en el loop, la diferencia no es exactamente 0
+		mean_old = mean_new;
+	}
+	for(i = 0; i<N_x; i++) {
+		for(j = 0; j<N_x; j++) {
+			temp_o << T_aux[i][j];
+			if(j != N_x-1) {
+				temp_o << " ";
+			}
+		}
+		temp_o << endl;
+	}
+	cout << t << endl;
 }
