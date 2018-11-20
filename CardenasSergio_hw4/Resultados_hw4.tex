@@ -80,7 +80,14 @@ En este caso, los bordes de la roca de calcita permanecerán a 10$^\circ$C.
     \label{fig:my_label}
 \end{figure}
 
-Podemos observar que, aunque pasa bastante tiempo para que el sistema alcance el equilibrio, es el caso en el que menos se tarda (gracias a que las fronteras no cambian de temperatura).
+Podemos observar que, aunque pasa bastante tiempo para que el sistema alcance el equilibrio, es el caso en el que menos se tarda (gracias a que las fronteras no cambian de temperatura). A continuación se muestra la temperatura promedio de la roca a lo largo del tiempo:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{mean_fixed_boundaries.png}
+    \caption{Gráfica de temperatura promedio contra tiempo para condiciones de frontera fijas}
+    \label{fig:my_label}
+\end{figure}
 
 \subsection*{Condiciones de frontera periódicas}
 En este caso, las fronteras son periódicas, es decir, se asume que después de una frontera de la calcita se encuentra ubicada la frontera opuesta.
@@ -98,7 +105,14 @@ En este caso, las fronteras son periódicas, es decir, se asume que después de 
     \label{fig:my_label}
 \end{figure}
 
-Podemos ver que el sistema tarda mucho más en alcanzar el equilibrio. Esto se debe a que las fronteras ya no se mantienen a 10$^\circ$C. Debido a esto, la calcita se calentará hasta alcanzar los 100$^\circ$ de la varilla.
+Podemos ver que el sistema tarda mucho más en alcanzar el equilibrio. Esto se debe a que las fronteras ya no se mantienen a 10$^\circ$C. Debido a esto, la calcita se calentará hasta alcanzar los 100$^\circ$ de la varilla. A continuación se muestra la temperatura promedio de la roca a lo largo del tiempo:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{mean_periodic_boundaries.png}
+    \caption{Gráfica de temperatura promedio contra tiempo para condiciones de frontera periódicas}
+    \label{fig:my_label}
+\end{figure}
 
 \subsection*{Condiciones de frontera abiertas}
 En este último caso, las fronteras son abiertas. Para este caso, las segundas derivadas en las fronteras se realizan con segundas derivadas de adelanto/atraso en los ejes x/y según sea el caso.
@@ -116,5 +130,12 @@ En este último caso, las fronteras son abiertas. Para este caso, las segundas d
     \label{fig:my_label}
 \end{figure}
 
-El fenómeno observado es el mismo que en el caso anterior, el sistema tarda mucho tiempo en alcanzar el equilibrio y solo lo alcanza cuando toda la roca está a 100 $^\circ$C. La diferencia con el caso anterior es que el sistema converge un poco más rápido. Esto es debido a las segundas derivadas de adelanto/atraso en las fronteras.
+El fenómeno observado es el mismo que en el caso anterior, el sistema tarda mucho tiempo en alcanzar el equilibrio y solo lo alcanza cuando toda la roca está a 100 $^\circ$C. La diferencia con el caso anterior es que el sistema converge un poco más rápido. Esto es debido a las segundas derivadas de adelanto/atraso en las fronteras. A continuación se muestra la temperatura promedio de la roca a lo largo del tiempo:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{mean_open_boundaries.png}
+    \caption{Gráfica de temperatura promedio contra tiempo para condiciones de frontera abiertas}
+    \label{fig:my_label}
+\end{figure}
 \end{document}
