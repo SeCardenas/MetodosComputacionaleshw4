@@ -1,0 +1,120 @@
+\documentclass{article}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{blindtext}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[hidelinks]{hyperref} 
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{natbib}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{ragged2e}
+\usepackage[
+top    = 2.5cm,
+bottom = 2.50cm,
+left   = 3.00cm,
+right  = 2.50cm]{geometry}
+\usepackage[spanish]{babel}
+
+\title{Resultados Taller 4 - Métodos Computacionales}
+\author{Sergio Cárdenas - 201613444}
+\date{Noviembre 19, 2018}
+
+\begin{document}
+\maketitle
+\section{ODE - Movimiento de un proyectil con rozamiento}
+En esta sección, se mostrarán los resultados de la solución de una ecuación diferencial ordinaria para distintas condiciones iniciales. La ecuación diferencial se muestra a continuación:
+\begin{equation}
+    \frac{d^{2}\vec{v}(t)}{dt^{2}}=-\vec{g}-\frac{c}{m}|\vec{v}(t)|\vec{v}(t)
+\end{equation}
+Las condiciones iniciales, en términos del ángulo $\theta$ son las siguientes:
+\begin{equation}
+    \vec{x}(0)=(0,0) \quad \vec{v}(0)=300(cos(\theta),sin(\theta))
+\end{equation}
+\subsection*{Trayectoria con ángulo de 45 grados}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{trayectoria_45.png}
+    \caption{Gráfica de movimiento a 45 grados}
+    \label{fig:my_label}
+\end{figure}
+
+Se puede observar que la trayectoria no es una parábola, pues el avance en el eje x es cada vez menor; esto se debe al efecto del rozamiento sobre el proyectil. La distancia horizontal alcanzada es de aproximadamente 5,24m.
+
+\subsection{Trayectoria con varios ángulos}
+Además de probar con un ángulo de lanzamiento de 45$^\circ$, se usaron los valores de 10$^\circ$, 20$^\circ$, 30$^\circ$, 40$^\circ$, 50$^\circ$, 60$^\circ$, y 70$^\circ$ para dicho ángulo.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{trayectoria_varios_angulos.png}
+    \caption{Gráfica de movimiento a diferentes ángulos}
+    \label{fig:my_label}
+\end{figure}
+
+Al igual que en la gráfica anterior, se observa que las trayectorias no son parábolas, pues el avance horizontal es cada vez menor debido al rozamiento. Otro detalle adicional es que el ángulo que alcanza mayor no es 45$^\circ$ o algún ángulo cercano. De los casos probados, el ángulo con mayor distancia horizontal alcanzada es 20$^\circ$, con una distancia de cerca de 6,37m.
+
+\section{PDE - Cambio en la temperatura de una roca de calcita}
+Se tiene una sección de una roca de calcita de 50cm x 50cm, inicialmente a 10$^\circ$C, con una varilla metálica de diámetro 10cm, siempre a 100$^\circ$C, en el centro de esa sección. La ecuación diferencial parcial que representa el comportamiento del sistema es la siguiente:
+
+\begin{equation}
+    \frac{dT(x,y)}{dt} = \nu\frac{d^{2}T(x,y)}{dx^{2}} + \nu\frac{d^{2}T(x,y)}{dy^{2}} 
+\end{equation}
+Se tiene que la roca tiene coeficiente de difusión $\nu = k/(C_p\cdot\rho)$, conductividad térmica $k = 1.62m^2s^{-1}$, calor específico $C_p = 820Jkg^{-1}K^{-1}$, y densidad $\rho = 2.71g\ cm^{-3} = 2710kg\ m^{-3}$. Se tienen tres casos distintos: condiciones de frontera fijas, condiciones de frontera periódicas, y condiciones de frontera abiertas. Para cada caso, se realizaron 4 gráficas: las condiciones iniciales, dos estados intermedios, y el estado de equilibrio.
+
+\subsection*{Condiciones de frontera fijas}
+En este caso, los bordes de la roca de calcita permanecerán a 10$^\circ$C.
+
+\begin{figure}[H]
+    \centering
+    \subfigure[]{\label{PDE1_1}\includegraphics[scale = 0.5]{temp_fixed_1.png}}
+    \subfigure[]{\label{PDE1_2}\includegraphics[scale = 0.5]{temp_fixed_2.png}}
+    \label{fig:my_label}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \subfigure[]{\label{fig:PDE1_3}\includegraphics[scale = 0.4]{temp_fixed_3.png}}
+    \subfigure[]{\label{fig:PDE1_4}\includegraphics[scale = 0.4]{temp_fixed_4.png}}
+        \caption{Distribución de temperaturas para condiciones de frontera fijas a 10 grados centígrados a diferentes tiempos}
+    \label{fig:my_label}
+\end{figure}
+
+Podemos observar que, aunque pasa bastante tiempo para que el sistema alcance el equilibrio, es el caso en el que menos se tarda (gracias a que las fronteras no cambian de temperatura).
+
+\subsection*{Condiciones de frontera periódicas}
+En este caso, las fronteras son periódicas, es decir, se asume que después de una frontera de la calcita se encuentra ubicada la frontera opuesta.
+\begin{figure}[H]
+    \centering
+    \subfigure[]{\label{PDE2_1}\includegraphics[scale = 0.6]{temp_periodic_1.png}}
+    \subfigure[]{\label{PDE2_2}\includegraphics[scale = 0.6]{temp_periodic_2.png}}
+    \label{fig:my_label}
+\end{figure}
+\begin{figure}[H]
+    \centering 
+    \subfigure[]{\label{PDE2_3}\includegraphics[scale = 0.6]{temp_periodic_3.png}}
+    \subfigure[]{\label{PDE2_4}\includegraphics[scale = 0.6]{temp_periodic_4.png}}
+   \caption{Distribución de temperaturas para condiciones de frontera periódicas a diferentes tiempos.}
+    \label{fig:my_label}
+\end{figure}
+
+Podemos ver que el sistema tarda mucho más en alcanzar el equilibrio. Esto se debe a que las fronteras ya no se mantienen a 10$^\circ$C. Debido a esto, la calcita se calentará hasta alcanzar los 100$^\circ$ de la varilla.
+
+\subsection*{Condiciones de frontera abiertas}
+En este último caso, las fronteras son abiertas. Para este caso, las segundas derivadas en las fronteras se realizan con segundas derivadas de adelanto/atraso en los ejes x/y según sea el caso.
+\begin{figure}[H]
+    \centering
+    \subfigure[]{\label{PDE3_1}\includegraphics[scale = 0.6]{temp_open_1.png}}
+    \subfigure[]{\label{PDE3_2}\includegraphics[scale = 0.6]{temp_open_2.png}}
+    \label{fig:my_label}
+\end{figure}
+\begin{figure}[H]
+    \centering 
+    \subfigure[]{\label{PDE3_3}\includegraphics[scale = 0.6]{temp_open_3.png}}
+    \subfigure[]{\label{PDE3_4}\includegraphics[scale = 0.6]{temp_open_4.png}}
+   \caption{Distribución de temperaturas para condiciones de frontera abiertas a diferentes tiempos.}
+    \label{fig:my_label}
+\end{figure}
+
+El fenómeno observado es el mismo que en el caso anterior, el sistema tarda mucho tiempo en alcanzar el equilibrio y solo lo alcanza cuando toda la roca está a 100 $^\circ$C. La diferencia con el caso anterior es que el sistema converge un poco más rápido. Esto es debido a las segundas derivadas de adelanto/atraso en las fronteras.
+\end{document}

@@ -2,9 +2,10 @@
 #include <cmath>
 #include <fstream>
 
+//Constantes en SI
 const double k = 1.62;
 const double Cp = 820;
-const double rho = 2.71;
+const double rho = 2710;
 const double nu = k/(Cp*rho);
 
 const double d = 0.1; // en metros
